@@ -11,13 +11,15 @@
         class="desuev.ru.sberlesson6.FirstFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_first"/>
 
     <fragment
         android:id="@+id/secondFragment"
         class="desuev.ru.sberlesson6.SecondFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_second" />
 
 </LinearLayout>

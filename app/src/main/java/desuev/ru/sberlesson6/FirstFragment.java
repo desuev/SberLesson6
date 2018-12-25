@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,13 +19,20 @@ import desuev.ru.sberlesson6.API.CallBack;
 
 public class FirstFragment extends Fragment implements CallBack {
 
+    public interface TextUpdateInteface{
+        void onTextUpdate(String text);
+    }
+
+    private List<TextUpdateInteface> listeners = new ArrayList<>();
     private TextInputEditText textEditForRandomData;
     private BroadcastReceiverForLesson receiver;
     private IntentFilter filter;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         init();
     }
 
@@ -33,20 +44,19 @@ public class FirstFragment extends Fragment implements CallBack {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(receiver, filter, null, null);
+        Objects.requireNonNull(getActivity()).registerReceiver(receiver, filter, null, null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(receiver);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_first, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_first, container, false);
     }
 
     @Override
@@ -55,18 +65,24 @@ public class FirstFragment extends Fragment implements CallBack {
         textEditForRandomData = view.findViewById(R.id.editTextInFirstFragment);
     }
 
-    public static FirstFragment newInstance(){
+    public static FirstFragment newInstance() {
         return new FirstFragment();
     }
 
+    public void addListener(TextUpdateInteface listener){
+        listeners.add(listener);
+    }
     /**
-     *    Callback функция, принимающая в аргументах строку, сгенерированную сервисом.
-     *    Обновляет TextEdit в данном фрагменте (FirstFragment) и передаёт значение этой View в MainActivity
-     *    @param data строка, генерируемая сервисом (получается через BroadcastReceiver)
+     * Callback функция, принимающая в аргументах строку, сгенерированную сервисом.
+     * Обновляет TextEdit в данном фрагменте (FirstFragment) и передаёт значение этой View в MainActivity
+     *
+     * @param data строка, генерируемая сервисом (получается через BroadcastReceiver)
      */
     @Override
     public void update(String data) {
         textEditForRandomData.setText(data);
-        ((MainActivity)getActivity()).setDataToSecondFragment(textEditForRandomData.getText().toString());
+        for(TextUpdateInteface e: listeners){
+            e.onTextUpdate(data);
+        }
     }
 }

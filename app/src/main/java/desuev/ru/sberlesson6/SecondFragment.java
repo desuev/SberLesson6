@@ -23,12 +23,18 @@ public class SecondFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         justBtn = view.findViewById(R.id.justBtn);
         justBtn.setOnClickListener(l -> {
             FragmentManager manager = getChildFragmentManager();
-            manager.beginTransaction().add(R.id.parentContainerInSecondFragment, ThirdFragment.newInstance(), "childFragment").commitNow();
+            manager.beginTransaction().add(R.id.secondFragment, ThirdFragment.newInstance(), "childFragment").commitNow();
         });
     }
 
